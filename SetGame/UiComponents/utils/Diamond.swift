@@ -1,3 +1,11 @@
+//
+//  Diamond.swift
+//  SetGame
+//
+//  Created by KevinMartinez on 10/30/25.
+//
+
+
 import SwiftUI
 
 struct Diamond: Shape {
