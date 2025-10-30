@@ -27,10 +27,8 @@ struct CardView: View {
                 VStack(spacing: geometry.size.height * 0.05) {
                     ForEach(0..<card.number.rawValue , id: \.self){ _ in
                         shapeView(for: card, size: geometry.size)
-                
                     }
                 }.padding(geometry.size.width * 0.05)
-
             }
         }
     }
@@ -57,7 +55,6 @@ struct CardView: View {
 
         return min(size.width, size.height) * 0.05
     }
-
 }
 
 @ViewBuilder
@@ -73,11 +70,9 @@ func shapeView(for card: Card, size: CGSize) -> some View {
             applyShading(to: Rectangle(), card: card, color: shapeColor)
         case .oval:
             applyShading(to: Capsule(), card: card, color: shapeColor)
-
         }
     }
     .aspectRatio(symbolAspectRatio, contentMode: .fit)
-    
 }
 
 @ViewBuilder
@@ -89,18 +84,6 @@ func applyShading(to shape: some Shape, card: Card, color: Color) -> some View {
         shape.fill(color.opacity(0.3))
     case .open:
         shape.stroke(color, lineWidth: 2)
-    
-    }
-}
-
-func colorForCard(_ cardColor: CardColor) -> Color {
-    switch cardColor {
-    case .red:
-        return .red
-    case .green:
-        return .green
-    case .purple:
-        return .purple
     }
 }
 

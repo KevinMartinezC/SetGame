@@ -28,7 +28,7 @@ struct SetGameView: View {
                     Button("Deal 3 More") {
                         viewModel.game.dealThreeMore()
                     }
-                    .disabled(!viewModel.game.deck.isEmpty)
+                    .disabled(viewModel.game.deck.isEmpty)
                     .buttonStyle(.bordered)
                 }.padding(.horizontal)
 
@@ -46,30 +46,21 @@ struct SetGameView: View {
                         ),
                         spacing: 8
                     ) {
-
+                        ForEach(viewModel.game.cardsInPlay) { card in
+                            CardView(
+                                card: card,
+                                isSelected: viewModel.isSelected(card),
+                                selectionState: viewModel.game.selectionState()
+                            )
+                            .aspectRatio(2 / 3, contentMode: .fit)
+                            .onTapGesture {
+                                viewModel.selectCard(card: card)
+                            }
+                        }
                     }
-
                 }
             }
         }
-    }
-}
-
-func columnsForCardCount(_ count: Int, geometry: GeometryProxy) -> Int {
-    let width = geometry.size.width
-    let minCardWidth: CGFloat = 60
-
-    // Calculate optional columns based on card count and available width
-    if count <= 12 {
-        return width > 800 ? 4 : 3
-    } else if count <= 18 {
-        return width > 800 ? 6 : 4
-    } else if count <= 24 {
-        return width > 800 ? 6 : 5
-    } else {
-        // For many cards, ensure minimun width
-        let maxColumns = Int(width / minCardWidth)
-        return max(6, min(maxColumns, 9))
     }
 }
 

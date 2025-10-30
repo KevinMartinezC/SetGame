@@ -5,7 +5,6 @@
 //  Created by KevinMartinez on 10/30/25.
 //
 
-
 import SwiftUI
 
 func colorForCard(_ cardColor: CardColor) -> Color {

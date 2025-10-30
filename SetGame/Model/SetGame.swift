@@ -4,6 +4,7 @@
 //
 //  Created by KevinMartinez on 10/29/25.
 //
+
 import SwiftUI
 
 struct SetGame {
@@ -12,28 +13,46 @@ struct SetGame {
     private(set) var selectedIndices: [Int]
 
     init() {
-        var allCards: [Card] = []
-        for number in CardNumber.allCases {
-            for shape in CardShape.allCases {
-                for shading in CardShading.allCases {
-                    for color in CardColor.allCases {
-                        allCards.append(
-                            Card(
-                                number: number,
-                                shape: shape,
-                                shading: shading,
-                                color: color
-                            )
+        self.deck = CardNumber.allCases.flatMap { number in
+            CardShape.allCases.flatMap { shape in
+                CardShading.allCases.flatMap { shading in
+                    CardColor.allCases.map { color in
+                        Card(
+                            number: number,
+                            shape: shape,
+                            shading: shading,
+                            color: color
                         )
                     }
                 }
             }
-        }
+        }.shuffled()
 
-        allCards.shuffle()
-        self.cardsInPlay = Array(allCards.prefix(12))
-        self.deck = Array(allCards.dropFirst(12))
+        self.cardsInPlay = Array(deck.prefix(12))
+        self.deck = Array(deck.dropFirst(12))
         self.selectedIndices = []
+    }
+
+    mutating func select(at index: Int) {
+        guard index >= 0 && index < cardsInPlay.count else { return }
+        if selectedIndices.count == 3 {
+            if isSelectedSet() {
+                if selectedIndices.contains(index) {
+                    replaceMatchedCards()
+                } else {
+                    replaceMatchedCards()
+                    selectedIndices = [index]
+                }
+            } else {
+                selectedIndices = [index]
+            }
+        } else {
+            if let existingIndex = selectedIndices.firstIndex(of: index) {
+                selectedIndices.remove(at: existingIndex)
+            } else {
+                selectedIndices.append(index)
+            }
+        }
     }
 
     mutating func dealThreeMore() {
@@ -64,10 +83,16 @@ struct SetGame {
         selectedIndices = []
     }
 
+    func selectionState() -> SelectionState {
+        if selectedIndices.count == 3 {
+            return isSelectedSet() ? .matchingSet : .nonMatchingSet
+        }
+        return .partial
+    }
+
     func isSelectedSet() -> Bool {
         guard selectedIndices.count == 3 else { return false }
         let cards = selectedIndices.map { cardsInPlay[$0] }
         return Card.isSet(cards[0], cards[1], cards[2])
     }
-
 }
